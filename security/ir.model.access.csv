@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dental_appointment,dental.appointment,model_dental_appointment,base.group_user,1,1,1,1
+access_dental_patient_history,dental.patient.history,model_dental_patient_history,base.group_user,1,1,1,1
+access_dental_service,dental.service,model_dental_service,base.group_user,1,1,1,1
+access_dental_service_type,dental.service.type,model_dental_service_type,base.group_user,1,1,1,1
+access_dental_dashboard,dental.dashboard,model_dental_dashboard,base.group_user,1,1,1,1

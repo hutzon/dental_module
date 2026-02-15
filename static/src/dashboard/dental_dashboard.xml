@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="dental_management.DentalDashboard" owl="1">
+        <div class="h-100 overflow-auto bg-view">
+            <!-- Header Filter Section -->
+            <div class="o_control_panel d-flex flex-column gap-3 p-3 bg-white shadow-sm mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="m-0 text-primary">Dental Clinic Dashboard</h2>
+                    <div class="d-flex gap-2">
+                         <div class="input-group">
+                            <span class="input-group-text">Type</span>
+                            <select class="form-select" name="service_type_id" t-on-change="onFilterChange">
+                                <option value="">All Types</option>
+                                <t t-foreach="state.service_types" t-as="type" t-key="type.id">
+                                    <option t-att-value="type.id"><t t-esc="type.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text">Start</span>
+                            <input type="date" class="form-control" name="date_start" t-on-change="onFilterChange"/>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text">End</span>
+                            <input type="date" class="form-control" name="date_end" t-on-change="onFilterChange"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid p-3">
+                <!-- KPI Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm p-3">
+                            <h5 class="text-muted">Total Completed Appointments</h5>
+                            <h2 class="text-primary fw-bold"><t t-esc="state.kpi.total_appointments"/></h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm p-3">
+                            <h5 class="text-muted">Patients Seen</h5>
+                            <h2 class="text-info fw-bold"><t t-esc="state.kpi.patients_seen"/></h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm p-3">
+                            <h5 class="text-muted">Total Revenue</h5>
+                            <h2 class="text-success fw-bold">
+                                <t t-esc="state.kpi.total_revenue" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <canvas t-ref="pieChart" style="height: 300px;"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <canvas t-ref="barChart" style="height: 300px;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white">
+                                <h5 class="m-0">Last 5 Completed Appointments</h5>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Patient</th>
+                                            <th>Doctor</th>
+                                            <th>Services</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="state.recent_appointments" t-as="app" t-key="app.id">
+                                            <td><t t-esc="app.date"/></td>
+                                            <td><t t-esc="app.patient"/></td>
+                                            <td><t t-esc="app.doctor"/></td>
+                                            <td><t t-esc="app.services"/></td>
+                                        </tr>
+                                        <tr t-if="state.recent_appointments.length === 0">
+                                            <td colspan="4" class="text-center text-muted p-3">No recent appointments found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

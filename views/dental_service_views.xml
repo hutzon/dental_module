@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dental_service_tree" model="ir.ui.view">
+        <field name="name">dental.service.tree</field>
+        <field name="model">dental.service</field>
+        <field name="arch" type="xml">
+            <list string="Dental Services" editable="bottom">
+                <field name="name"/>
+                <field name="service_type_id"/>
+                <field name="code"/>
+                <field name="price"/>
+                <field name="duration_minutes"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dental_service_form" model="ir.ui.view">
+        <field name="name">dental.service.form</field>
+        <field name="model">dental.service</field>
+        <field name="arch" type="xml">
+            <form string="Dental Service">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Service Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="service_type_id"/>
+                            <field name="price"/>
+                        </group>
+                        <group>
+                            <field name="duration_minutes"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dental_service_search" model="ir.ui.view">
+        <field name="name">dental.service.search</field>
+        <field name="model">dental.service</field>
+        <field name="arch" type="xml">
+            <search string="Search Services">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="service_type_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'service_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_dental_service" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">dental.service</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create your first dental service!
+          </p>
+        </field>
+    </record>
+</odoo>

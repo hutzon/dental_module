@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_dental" model="ir.ui.view">
+        <field name="name">res.partner.form.dental</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_patient"/>
+                <field name="is_doctor"/>
+            </xpath>
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" type="object" name="action_view_appointments"
+                    icon="fa-calendar"
+                    invisible="is_patient == False and is_doctor == False">
+                    <field string="Appointments" name="appointment_count" widget="statinfo"/>
+                </button>
+            </div>
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page string="Medical History" invisible="is_patient == False">
+                    <group>
+                        <field name="next_appointment_id" readonly="1"/>
+                    </group>
+                    <field name="patient_history_ids">
+                        <list editable="bottom">
+                            <field name="date"/>
+                            <field name="doctor_id"/>
+                            <field name="appointment_id"/>
+                            <field name="service_ids" widget="many2many_tags"/>
+                            <field name="description"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Action for Patients -->
+    <record id="action_dental_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_patient', '=', True)]</field>
+        <field name="context">{'default_is_patient': True}</field>
+    </record>
+
+    <!-- Action for Doctors -->
+    <record id="action_dental_doctor" model="ir.actions.act_window">
+        <field name="name">Doctors</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_doctor', '=', True)]</field>
+        <field name="context">{'default_is_doctor': True}</field>
+    </record>
+</odoo>
