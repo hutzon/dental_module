@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- PDF Report Action -->
+    <record id="action_report_dental_prescription" model="ir.actions.report">
+        <field name="name">Print Prescription</field>
+        <field name="model">dental.prescription</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dental_management.report_prescription</field>
+        <field name="report_file">dental_management.report_prescription</field>
+        <field name="print_report_name">'Prescription - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_dental_prescription"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_prescription_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.patient_id.lang)"/>
+            <div class="page">
+                <div class="oe_structure"/>
+                
+                <h2 class="mt-4 mb-4 text-center">
+                    <span>Medical Prescription</span>
+                    <span t-if="doc.name != 'New'"> - <t t-esc="doc.name"/></span>
+                </h2>
+
+                <div class="row mt-4 mb-4">
+                    <div class="col-6">
+                        <strong>Patient:</strong>
+                        <div t-field="doc.patient_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True}'/>
+                    </div>
+                    <div class="col-6 text-end">
+                        <strong>Attending Doctor:</strong>
+                        <div t-field="doc.doctor_id.name"/>
+                        <div t-if="doc.doctor_id.phone" t-field="doc.doctor_id.phone"/>
+                        <div class="mt-2">
+                            <strong>Date:</strong> <span t-field="doc.date"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div t-if="doc.line_ids" class="mt-5">
+                    <h3>Medications</h3>
+                    <table class="table table-sm o_main_table table-borderless mt-3">
+                        <thead style="border-bottom: 2px solid black;">
+                            <tr>
+                                <th name="th_medication" class="text-start">Medication</th>
+                                <th name="th_dosage" class="text-start">Dosage</th>
+                                <th name="th_frequency" class="text-start">Frequency</th>
+                                <th name="th_duration" class="text-start">Duration</th>
+                                <th name="th_instructions" class="text-start">Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="prescription_tbody">
+                            <t t-foreach="doc.line_ids" t-as="line">
+                                <tr>
+                                    <td><span t-field="line.medication"/></td>
+                                    <td><span t-field="line.dosage"/></td>
+                                    <td><span t-field="line.frequency"/></td>
+                                    <td><span t-field="line.duration"/></td>
+                                    <td><span t-field="line.instructions"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div t-if="doc.notes" class="mt-4">
+                    <strong>General Instructions:</strong>
+                    <p t-field="doc.notes" class="mt-2"/>
+                </div>
+
+                <div class="row mt-5 pt-5">
+                    <div class="col-6 offset-6 text-center" style="border-top: 1px solid black;">
+                        <strong>Doctor Signature</strong>
+                        <br/>
+                        <span t-field="doc.doctor_id.name"/>
+                    </div>
+                </div>
+
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_prescription">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="dental_management.report_prescription_document" t-lang="doc.patient_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

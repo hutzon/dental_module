@@ -29,10 +29,39 @@ class DentalAppointment(models.Model):
         ('canceled', 'Canceled')
     ], string='Status', default='draft', tracking=True)
     
-    # For color coding in calendar view
-    color = fields.Integer(string='Color', related='doctor_id.color', readonly=True)
+    # For color coding in calendar and kanban views
+    color = fields.Integer(string='Color', compute='_compute_color', store=True)
+
+    @api.depends('state')
+    def _compute_color(self):
+        for record in self:
+            if record.state in ['draft', 'confirmed']:
+                record.color = 4 # Blue
+            elif record.state == 'done':
+                record.color = 10 # Green
+            elif record.state == 'canceled':
+                record.color = 1 # Red
+            else:
+                record.color = 0
     
     service_ids = fields.Many2many('dental.service', string='Services')
+
+    prescription_count = fields.Integer(compute='_compute_prescription_count', string="Prescription Count")
+
+    def _compute_prescription_count(self):
+        for app in self:
+            app.prescription_count = self.env['dental.prescription'].search_count([('appointment_id', '=', app.id)])
+
+    def action_view_prescriptions(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id("dental_management.action_dental_prescription")
+        action['domain'] = [('appointment_id', '=', self.id)]
+        action['context'] = {
+            'default_appointment_id': self.id,
+            'default_patient_id': self.patient_id.id,
+            'default_doctor_id': self.doctor_id.id,
+        }
+        return action
 
     @api.model
     def create(self, vals):

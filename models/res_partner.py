@@ -30,6 +30,19 @@ class ResPartner(models.Model):
             ], order='date_start asc', limit=1)
             partner.next_appointment_id = next_app.id if next_app else False
 
+    prescription_count = fields.Integer(string='Prescriptions', compute='_compute_prescription_count')
+
+    def _compute_prescription_count(self):
+        for partner in self:
+            partner.prescription_count = self.env['dental.prescription'].search_count([('patient_id', '=', partner.id)])
+
+    def action_view_prescriptions(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id("dental_management.action_dental_prescription")
+        action['domain'] = [('patient_id', '=', self.id)]
+        action['context'] = {'default_patient_id': self.id}
+        return action
+
     def action_view_appointments(self):
         self.ensure_one()
         return {

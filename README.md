@@ -5,7 +5,7 @@
 ## 🌟 Key Features
 
 ### 📊 Dynamic Dashboard
-- **Real-time Overview**: View total appointments, patients seen, and revenue at a glance.
+- **Real-time Overview**: View total pending appointments, completed appointments, patients seen, and revenue at a glance.
 - **Interactive Charts**:
     - **Service Distribution**: Visual Pie Chart showing appointments by service type.
     - **Doctor Performance**: Bar Chart comparing appointment counts by doctor.
@@ -13,10 +13,16 @@
 - **Recent Activity**: detailed list of the last 5 completed appointments.
 
 ### 📅 Appointment Management
-- **Calendar-First Design**: Intuitive calendar view for scheduling.
+- **Calendar-First Design**: Intuitive calendar view for scheduling with **Status Color Coding** (Draft = Grey, Confirmed = Blue, Done = Green, Canceled = Red).
+- **Kanban View**: Visual cards with status color indicators.
 - **Double-Booking Prevention**: Automatic validation prevents scheduling conflicts for doctors.
 - **Service Integration**: Select multiple services for each appointment; duration is calculated automatically.
 - ** Status Workflow**: Track appointments from Draft -> Confirmed -> Done, with options to Cancel.
+
+### 📝 Medical Prescriptions
+- **Integrated Creation**: Generate prescriptions directly from an appointment with one click (auto-fills patient and doctor info).
+- **Medication Details**: Register medication name, dosage, frequency, and duration.
+- **PDF Generation**: Instantly print or download a professional PDF prescription ready for the patient.
 
 ### 🦷 Service Management
 - **Service Types**: Organize services into categories (e.g., General Dentistry, Orthodontics, Cosmetic).

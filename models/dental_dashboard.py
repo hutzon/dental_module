@@ -9,78 +9,63 @@ class DentalDashboard(models.Model):
     def get_dashboard_data(self, date_start=None, date_end=None, service_type_id=None):
         """ Returns data for the dashboard charts and KPIs """
         
-        # Domain construction
-        domain = [('state', '=', 'done')]
+        # 1. KPI Data
+        # We need counts for Pending and Completed regardless of the domain? No, let's keep all KPIs filtered by the date and service type.
+        # But wait, original domain was only searching 'done' appointments! Let's change the domain to get everything and then filter for the counts.
+        domain = []
         if date_start:
             domain.append(('date_start', '>=', date_start))
         if date_end:
             domain.append(('date_start', '<=', date_end))
-        
-        # If filtering by service type, we need to handle Many2many
-        # This is a bit tricky since appointments have multiple services
-        # We'll filter appointments that have AT LEAST one service of the given type
         if service_type_id:
             service_type_id = int(service_type_id)
             services_of_type = self.env['dental.service'].search([('service_type_id', '=', service_type_id)])
             if services_of_type:
                 domain.append(('service_ids', 'in', services_of_type.ids))
-            else:
-                # If no services of this type exist, logically no appointments match
-                return self._empty_dashboard_data()
 
-        appointments = self.env['dental.appointment'].search(domain)
+        all_filtered_appointments = self.env['dental.appointment'].search(domain)
         
-        # 1. KPI Data
-        total_appointments = len(appointments)
-        patients_seen = len(set(appointments.mapped('patient_id')))
-        # Revenue: Sum of prices of all services in these appointments
-        # Note: If an appointment has multiple services, we sum them all.
-        # If we filtered by Service Type, should we only sum services of that type?
-        # User requirement: "General information... dynamic updates". 
-        # Usually dashboard logic keeps context. Let's sum all services of the MATCHED appointments for simplicity mostly,
-        # but technically accurate would be to filter services too. 
-        # For now, let's sum total revenue of the appointments found.
-        total_revenue = sum(sum(app.service_ids.mapped('price')) for app in appointments)
+        # Now segment them
+        completed_appointments = all_filtered_appointments.filtered(lambda a: a.state == 'done')
+        pending_appointments = all_filtered_appointments.filtered(lambda a: a.state in ['draft', 'confirmed'])
+
+        total_completed = len(completed_appointments)
+        total_pending = len(pending_appointments)
+        total_appointments = len(all_filtered_appointments)
+        patients_seen = len(set(completed_appointments.mapped('patient_id')))
+        total_revenue = sum(sum(app.service_ids.mapped('price')) for app in completed_appointments)
 
         # 2. Charts Data
-        
-        # Pie Chart: Appointments by Service Type
-        # Logic: Iterate appointments, count occurrences of Service Types. 
-        # An appointment with 2 types counts for both? Yes, usually.
         service_type_counts = {}
         all_types = self.env['dental.service.type'].search([])
         for t in all_types:
             service_type_counts[t.name] = 0
-            
-        # Also handle "Undefined" type
         service_type_counts['Other'] = 0
         
-        for app in appointments:
+        # Usually we only want to chart completed appointments, right? Or all? Let's chart all filtered appointments.
+        for app in all_filtered_appointments:
             for service in app.service_ids:
                 t_name = service.service_type_id.name if service.service_type_id else 'Other'
                 if t_name in service_type_counts:
                     service_type_counts[t_name] += 1
                 else:
-                    service_type_counts[t_name] = 1 # Should cover 'Other' initialization
+                    service_type_counts[t_name] = 1
                     
-        # Remove zero counts to clean up chart? Or keep top 5?
-        # Let's keep all for now, assuming not too many types.
         pie_labels = list(service_type_counts.keys())
         pie_data = list(service_type_counts.values())
 
-        # Bar Chart: Appointments by Doctor
         doctor_counts = {}
-        for app in appointments:
+        for app in all_filtered_appointments:
             d_name = app.doctor_id.name
             doctor_counts[d_name] = doctor_counts.get(d_name, 0) + 1
             
         bar_labels = list(doctor_counts.keys())
         bar_data = list(doctor_counts.values())
 
-        # 3. Recent 5 Appointments
+        # 3. Recent 5 Appointments (Completed)
         recent_appointments = []
-        # Re-search with limit and order, but using same domain
-        recent_apps = self.env['dental.appointment'].search(domain, order='date_start desc', limit=5)
+        done_domain = domain + [('state', '=', 'done')]
+        recent_apps = self.env['dental.appointment'].search(done_domain, order='date_start desc', limit=5)
         for app in recent_apps:
             recent_appointments.append({
                 'id': app.id,
@@ -96,6 +81,8 @@ class DentalDashboard(models.Model):
                 'total_appointments': total_appointments,
                 'patients_seen': patients_seen,
                 'total_revenue': total_revenue,
+                'total_pending': total_pending,
+                'total_completed': total_completed,
             },
             'charts': {
                 'pie': {'labels': pie_labels, 'data': pie_data},
@@ -106,7 +93,7 @@ class DentalDashboard(models.Model):
 
     def _empty_dashboard_data(self):
          return {
-            'kpi': {'total_appointments': 0, 'patients_seen': 0, 'total_revenue': 0},
+            'kpi': {'total_appointments': 0, 'patients_seen': 0, 'total_revenue': 0, 'total_pending': 0, 'total_completed': 0},
             'charts': {'pie': {'labels': [], 'data': []}, 'bar': {'labels': [], 'data': []}},
             'recent_appointments': [],
         }

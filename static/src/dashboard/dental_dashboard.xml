@@ -31,23 +31,29 @@
             <div class="container-fluid p-3">
                 <!-- KPI Cards -->
                 <div class="row mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card text-center shadow-sm p-3">
-                            <h5 class="text-muted">Total Completed Appointments</h5>
-                            <h2 class="text-primary fw-bold"><t t-esc="state.kpi.total_appointments"/></h2>
+                            <h5 class="text-muted">Total Pending</h5>
+                            <h2 class="text-warning fw-bold"><t t-esc="state.kpi.total_pending"/></h2>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="card text-center shadow-sm p-3">
+                            <h5 class="text-muted">Total Completed</h5>
+                            <h2 class="text-success fw-bold"><t t-esc="state.kpi.total_completed"/></h2>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="card text-center shadow-sm p-3">
                             <h5 class="text-muted">Patients Seen</h5>
                             <h2 class="text-info fw-bold"><t t-esc="state.kpi.patients_seen"/></h2>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card text-center shadow-sm p-3">
                             <h5 class="text-muted">Total Revenue</h5>
-                            <h2 class="text-success fw-bold">
-                                <t t-esc="state.kpi.total_revenue" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            <h2 class="text-primary fw-bold">
+                                $<t t-esc="state.kpi.total_revenue" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                             </h2>
                         </div>
                     </div>

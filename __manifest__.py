@@ -16,10 +16,13 @@ A comprehensive module to manage dental clinic operations:
     'depends': ['base', 'contacts', 'calendar'],
     'data': [
         'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
         'views/dental_dashboard_action.xml',
         'views/dental_appointment_views.xml',
         'views/dental_service_type_views.xml',
         'views/dental_service_views.xml',
+        'views/dental_prescription_views.xml',
+        'reports/prescription_report.xml',
         'views/res_partner_views.xml',
         'views/menu.xml',
     ],

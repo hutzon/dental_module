@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Prescription Form View -->
+    <record id="view_dental_prescription_form" model="ir.ui.view">
+        <field name="name">dental.prescription.form</field>
+        <field name="model">dental.prescription</field>
+        <field name="arch" type="xml">
+            <form string="Prescription">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" widget="res_partner_many2one" context="{'default_is_patient': True}"/>
+                            <field name="doctor_id" widget="res_partner_many2one" context="{'default_is_doctor': True}"/>
+                            <field name="appointment_id" domain="[('patient_id', '=', patient_id)]"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Medications">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="medication"/>
+                                    <field name="dosage"/>
+                                    <field name="frequency"/>
+                                    <field name="duration"/>
+                                    <field name="instructions"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="General Instructions">
+                            <field name="notes" placeholder="General medical notes or instructions for the patient..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Prescription List View -->
+    <record id="view_dental_prescription_list" model="ir.ui.view">
+        <field name="name">dental.prescription.list</field>
+        <field name="model">dental.prescription</field>
+        <field name="arch" type="xml">
+            <list string="Prescriptions">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="date"/>
+                <field name="appointment_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Prescription Action -->
+    <record id="action_dental_prescription" model="ir.actions.act_window">
+        <field name="name">Prescriptions</field>
+        <field name="res_model">dental.prescription</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Medical Prescription!
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -5,10 +5,11 @@
         <field name="name">dental.appointment.calendar</field>
         <field name="model">dental.appointment</field>
         <field name="arch" type="xml">
-            <calendar string="Appointments" date_start="date_start" date_stop="date_end" color="doctor_id" quick_create="false" mode="week">
+            <calendar string="Appointments" date_start="date_start" date_stop="date_end" color="color" quick_create="false" mode="week">
                 <field name="patient_id"/>
                 <field name="doctor_id"/>
                 <field name="state"/>
+                <field name="color" invisible="1"/>
             </calendar>
         </field>
     </record>
@@ -41,6 +42,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_prescriptions" icon="fa-pencil-square-o">
+                            <field string="Prescriptions" name="prescription_count" widget="statinfo"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
@@ -82,7 +88,7 @@
                 <field name="date_start"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_global_click">
+                        <div t-attf-class="oe_kanban_color_#{record.color.raw_value} oe_kanban_global_click">
                             <div class="o_kanban_record_top">
                                 <div class="o_kanban_record_headings">
                                     <strong class="o_kanban_record_title"><field name="name"/></strong>

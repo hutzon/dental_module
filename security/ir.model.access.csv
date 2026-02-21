@@ -4,3 +4,5 @@ access_dental_patient_history,dental.patient.history,model_dental_patient_histor
 access_dental_service,dental.service,model_dental_service,base.group_user,1,1,1,1
 access_dental_service_type,dental.service.type,model_dental_service_type,base.group_user,1,1,1,1
 access_dental_dashboard,dental.dashboard,model_dental_dashboard,base.group_user,1,1,1,1
+access_dental_prescription,dental.prescription,model_dental_prescription,base.group_user,1,1,1,1
+access_dental_prescription_line,dental.prescription.line,model_dental_prescription_line,base.group_user,1,1,1,1
